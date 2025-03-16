@@ -16,11 +16,13 @@ public class GitHubRemoteRepository extends AbstractRemoteRepository {
     private String owner;
     private String repo;
     private String accessToken;
+    private Utils utils;
 
-    public GitHubRemoteRepository(String owner, String repo, String accessToken) {
+    public GitHubRemoteRepository(String owner, String repo, String accessToken, Utils utils) {
         this.owner = owner;
         this.repo = repo;
         this.accessToken = accessToken;
+        this.utils = utils;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class GitHubRemoteRepository extends AbstractRemoteRepository {
         try {
             String route = String.format(GITHUB_ALL_COMMITS_FOR_BRANCH_ROUTE, owner, repo, branch);
 
-            GitHubCommitDTO[] commits = Utils.fetchData(route, GitHubCommitDTO[].class, accessToken);
+            GitHubCommitDTO[] commits = utils.fetchData(route, GitHubCommitDTO[].class, accessToken);
 
             return Arrays.stream(commits)
                     .map(GitHubCommitDTO::getSha)
@@ -48,7 +50,7 @@ public class GitHubRemoteRepository extends AbstractRemoteRepository {
 
             String route = String.format(GITHUB_ALL_DIFFERENCES_ROUTE, owner, repo, base, head);
 
-            GitHubAllChangesDTO changes = Utils.fetchData(route, GitHubAllChangesDTO.class, accessToken);
+            GitHubAllChangesDTO changes = utils.fetchData(route, GitHubAllChangesDTO.class, accessToken);
 
             if(changes.getChangedFiles() == null) {
                 return List.of();
